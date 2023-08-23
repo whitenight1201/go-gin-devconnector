@@ -1,7 +1,12 @@
 package main
 
-import "github.com/whitenight1201/go-devconnector/pkg/routes"
+import (
+	"github.com/whitenight1201/go-devconnector/pkg/database"
+	"github.com/whitenight1201/go-devconnector/pkg/server"
+)
 
 func main() {
-	routes.Start()
+	database.DatabaseConnection()
+
+	server.Start()
 }
