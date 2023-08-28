@@ -9,7 +9,7 @@ import (
 )
 
 func signUp(ctx *gin.Context) {
-	var user *models.User
+	user := new(models.User)
 
 	if err := ctx.ShouldBind(&user); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -18,14 +18,36 @@ func signUp(ctx *gin.Context) {
 		return
 	}
 
-	res, err := controllers.AddUser(user)
+	err := controllers.AddUser(user)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err})
 		return
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"user": res,
+		"msg": "Signed in successfully.",
+		"jwt": "123456789",
 	})
-	return
+}
+
+func signIn(ctx *gin.Context) {
+	user := new(models.User)
+
+	if err := ctx.ShouldBind(user); err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"error": err,
+		})
+		return
+	}
+
+	user, err := controllers.Authenticate(user.Useremail, user.Password)
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Sign in failed."})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"msg": "Signed in successfully.",
+		"jwt": "123456789",
+	})
 }

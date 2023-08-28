@@ -7,28 +7,53 @@ import (
 	"github.com/whitenight1201/go-devconnector/pkg/database"
 	"github.com/whitenight1201/go-devconnector/pkg/models"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
-func AddUser(user *models.User) (*models.User, error) {
+func AddUser(user *models.User) error {
 	salt, err := GenerateSalt()
 	if err != nil {
-		return &models.User{}, err
+		return err
 	}
 	toHash := append([]byte(user.Password), salt...)
 	hashedPassword, err := bcrypt.GenerateFromPassword(toHash, bcrypt.DefaultCost)
 	if err != nil {
-		return &models.User{}, err
+		return err
 	}
 	user.Salt = salt
 	user.HashedPassword = hashedPassword
 
-	res := database.DB.Create(user)
+	var result models.User
+	dbResult := database.DB.Where("useremail = ?", user.Useremail).First(&result)
+	//fmt.Println(errors.Is(dbResult.Error, gorm.ErrRecordNotFound))
 
-	if res.RowsAffected == 0 {
-		return &models.User{}, errors.New("errors creating user")
+	if dbResult.Error == nil {
+		return errors.New("user already exist")
 	}
 
-	return user, nil
+	if dbResult.Error.Error() == gorm.ErrRecordNotFound.Error() {
+		res := database.DB.Create(user)
+		if res.RowsAffected == 0 {
+			return errors.New("errors creating user")
+		}
+	}
+
+	return nil
+}
+
+func Authenticate(useremail, password string) (*models.User, error) {
+	var user models.User
+	res := database.DB.Where("useremail = ?", useremail).First(&user)
+	if res.RowsAffected == 0 {
+		return nil, errors.New("user not found")
+	}
+
+	salted := append([]byte(password), user.Salt...)
+	if err := bcrypt.CompareHashAndPassword(user.HashedPassword, salted); err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }
 
 func GenerateSalt() ([]byte, error) {
