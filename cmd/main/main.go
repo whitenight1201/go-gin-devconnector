@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/whitenight1201/go-devconnector/pkg/database"
+	conf "github.com/whitenight1201/go-devconnector/pkg/config"
 	"github.com/whitenight1201/go-devconnector/pkg/server"
 )
 
@@ -11,9 +11,7 @@ func main() {
 	// InitLogger()
 	// defer sugarLogger.Sync()
 
-	database.DatabaseConnection()
-
-	server.Start()
+	server.Start(conf.NewConfig())
 }
 
 // func InitLogger() {

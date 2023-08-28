@@ -3,6 +3,7 @@ package controllers
 import (
 	"crypto/rand"
 	"errors"
+	"log"
 
 	"github.com/whitenight1201/go-devconnector/pkg/database"
 	"github.com/whitenight1201/go-devconnector/pkg/models"
@@ -62,4 +63,16 @@ func GenerateSalt() ([]byte, error) {
 		return nil, err
 	}
 	return salt, nil
+}
+
+// This function fetch user from database based on its ID
+func FetchUser(id uint) (*models.User, error) {
+	user := new(models.User)
+	user.ID = id
+	err := database.DB.Where("id = ?", user.ID).First(user).Error
+	if err != nil {
+		log.Fatal("Error fetching user")
+		return nil, err
+	}
+	return user, nil
 }
