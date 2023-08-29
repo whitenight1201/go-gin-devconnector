@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/whitenight1201/go-devconnector/pkg/dto"
@@ -17,11 +18,13 @@ type AuthController interface {
 
 type AuthControllerImpl struct {
 	authServices services.AuthServices
+	jwtServices  services.JWTServices
 }
 
-func NewAuthController(authServices services.AuthServices) AuthController {
+func NewAuthController(authServices services.AuthServices, jwtServices services.JWTServices) AuthController {
 	return &AuthControllerImpl{
 		authServices: authServices,
+		jwtServices:  jwtServices,
 	}
 }
 
@@ -40,14 +43,18 @@ func (authController *AuthControllerImpl) Register(c *gin.Context) {
 		return
 	}
 
-	result, err := authController.authServices.RegisterUser(registerRequest)
+	user, err := authController.authServices.RegisterUser(registerRequest)
 	if err != nil {
 		res := response.BuildErrorResponse("Cant create user", err.Error())
 		c.AbortWithStatusJSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := response.BuildSuccessResponse("Success", result)
+	//Generate Token
+	token := authController.jwtServices.GenerateToken(strconv.FormatInt(user.ID, 10))
+	user.Token = token
+
+	res := response.BuildSuccessResponse("Success", user)
 	c.JSON(http.StatusCreated, res)
 }
 
@@ -66,6 +73,10 @@ func (authController *AuthControllerImpl) Login(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, res)
 		return
 	}
+
+	//Generate Token
+	token := authController.jwtServices.GenerateToken(strconv.FormatInt(user.ID, 10))
+	user.Token = token
 
 	res := response.BuildSuccessResponse("Success", user)
 	c.JSON(http.StatusOK, res)

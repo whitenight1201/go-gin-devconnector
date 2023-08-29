@@ -13,8 +13,9 @@ import (
 func main() {
 	db := config.DatabaseConnection()
 	userRepository := repository.NewUserRepository(db)
+	jwtServices := services.NewJWTServices()
 	authServices := services.NewAuthServices(userRepository)
-	authController := controller.NewAuthController(authServices)
+	authController := controller.NewAuthController(authServices, jwtServices)
 
 	// Create default gin router with Logger and Recovery middleware already attached
 	router := gin.Default()
