@@ -3,7 +3,6 @@ package controller
 import (
 	"fmt"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/whitenight1201/go-devconnector/pkg/middleware"
 	"github.com/whitenight1201/go-devconnector/pkg/response"
@@ -14,7 +13,7 @@ import (
 
 type UserController interface {
 	UserRoutes(group *gin.Engine)
-	FetchUser(c *gin.Context)
+	CurrentUser(c *gin.Context)
 }
 
 type UserControllerImpl struct {
@@ -31,13 +30,11 @@ func NewUserController(userServices services.UserServices, jwtServices services.
 
 func (userController *UserControllerImpl) UserRoutes(router *gin.Engine) {
 	route := router.Group("/api", middleware.AuthorizeJWT(userController.jwtServices))
-	route.GET("/auth", userController.FetchUser)
+	route.GET("/auth", userController.CurrentUser)
 }
 
-func (userController *UserControllerImpl) FetchUser(c *gin.Context) {
-	header := c.GetHeader("x-auth-token")
-	token := userController.jwtServices.ValidateToken(header, c)
-	claims := token.Claims.(jwt.MapClaims)
+func (userController *UserControllerImpl) CurrentUser(c *gin.Context) {
+	claims := userController.jwtServices.GetClaimsJWT(c)
 	id := fmt.Sprintf("%v", claims["user_id"])
 
 	user, err := userController.userServices.FindUserById(id)
