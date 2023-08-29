@@ -12,11 +12,8 @@ import (
 	"github.com/whitenight1201/go-devconnector/pkg/exception"
 )
 
-var db *gorm.DB
-var err error
-
 // creating new connection database
-func DatabaseConnection() {
+func DatabaseConnection() *gorm.DB {
 	fmt.Println("Connecting to Database...")
 
 	err := godotenv.Load()
@@ -38,6 +35,8 @@ func DatabaseConnection() {
 	db.AutoMigrate(&entity.User{})
 
 	fmt.Println("Database connected successfully!")
+
+	return db
 }
 
 // closing database connection
