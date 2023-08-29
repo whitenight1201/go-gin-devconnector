@@ -13,9 +13,11 @@ import (
 func main() {
 	db := config.DatabaseConnection()
 	userRepository := repository.NewUserRepository(db)
+	userServices := services.NewUserServices(userRepository)
 	jwtServices := services.NewJWTServices()
 	authServices := services.NewAuthServices(userRepository)
 	authController := controller.NewAuthController(authServices, jwtServices)
+	userController := controller.NewUserController(userServices, jwtServices)
 
 	// Create default gin router with Logger and Recovery middleware already attached
 	router := gin.Default()
@@ -33,7 +35,7 @@ func main() {
 	api := router.Group("/api")
 
 	authController.AuthRoutes(api)
-
+	userController.UserRoutes(api)
 	//Start listening and serving requests
 	router.Run("localhost:5000")
 }

@@ -12,6 +12,7 @@ func ValidateRegister(register dto.RegisterRequest) error {
 		validation.Field(&register.Email, validation.Required, is.Email),
 		validation.Field(&register.Password, validation.Required, validation.Length(6, 0)))
 }
+
 func ValidateLogin(login dto.LoginRequest) error {
 	return validation.ValidateStruct(&login,
 		validation.Field(&login.Email, validation.Required, is.Email),
