@@ -12,7 +12,7 @@ import (
 
 func AuthorizeJWT(jwtServices services.JWTServices) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		authHeader := c.GetHeader("Authorization")
+		authHeader := c.GetHeader("x-auth-token")
 		if authHeader == "" {
 			res := response.BuildErrorResponse("Failed to process request", "No token provided")
 			c.AbortWithStatusJSON(http.StatusBadRequest, res)

@@ -14,7 +14,7 @@ import (
 
 type UserController interface {
 	UserRoutes(group *gin.RouterGroup)
-	Profile(c *gin.Context)
+	FetchUser(c *gin.Context)
 }
 
 type UserControllerImpl struct {
@@ -30,12 +30,12 @@ func NewUserController(userServices services.UserServices, jwtServices services.
 }
 
 func (userController *UserControllerImpl) UserRoutes(group *gin.RouterGroup) {
-	router := group.Group("/user", middleware.AuthorizeJWT(userController.jwtServices))
-	router.GET("/profile", userController.Profile)
+	router := group.Group("/", middleware.AuthorizeJWT(userController.jwtServices))
+	router.GET("/auth", userController.FetchUser)
 }
 
-func (userController *UserControllerImpl) Profile(c *gin.Context) {
-	header := c.GetHeader("Authorization")
+func (userController *UserControllerImpl) FetchUser(c *gin.Context) {
+	header := c.GetHeader("x-auth-token")
 	token := userController.jwtServices.ValidateToken(header, c)
 	claims := token.Claims.(jwt.MapClaims)
 	id := fmt.Sprintf("%v", claims["user_id"])

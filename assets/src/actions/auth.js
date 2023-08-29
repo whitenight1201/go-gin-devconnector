@@ -37,17 +37,15 @@ export const loadUser = () => async (dispatch) => {
 export const register = (formData) => async (dispatch) => {
   try {
     const res = await api.post('/users', formData);
-
     dispatch({
       type: REGISTER_SUCCESS,
-      payload: res.data
+      payload: res.data.data
     });
     dispatch(loadUser());
   } catch (err) {
     const errors = err.response.data.errors;
-
     if (errors) {
-      errors.forEach((error) => dispatch(setAlert(error.msg, 'danger')));
+      errors.forEach((error) => dispatch(setAlert(error, 'danger')));
     }
 
     dispatch({
@@ -65,7 +63,7 @@ export const login = (email, password) => async (dispatch) => {
 
     dispatch({
       type: LOGIN_SUCCESS,
-      payload: res.data
+      payload: res.data.data
     });
 
     dispatch(loadUser());
@@ -73,7 +71,7 @@ export const login = (email, password) => async (dispatch) => {
     const errors = err.response.data.errors;
 
     if (errors) {
-      errors.forEach((error) => dispatch(setAlert(error.msg, 'danger')));
+      errors.forEach((error) => dispatch(setAlert(error, 'danger')));
     }
 
     dispatch({
