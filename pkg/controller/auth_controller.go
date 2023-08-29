@@ -11,7 +11,7 @@ import (
 )
 
 type AuthController interface {
-	AuthRoutes(group *gin.RouterGroup)
+	AuthRoutes(group *gin.Engine)
 	Login(c *gin.Context)
 	Register(c *gin.Context)
 }
@@ -28,8 +28,8 @@ func NewAuthController(authServices services.AuthServices, jwtServices services.
 	}
 }
 
-func (authController *AuthControllerImpl) AuthRoutes(group *gin.RouterGroup) {
-	route := group.Group("/")
+func (authController *AuthControllerImpl) AuthRoutes(router *gin.Engine) {
+	route := router.Group("/api")
 	route.POST("/auth", authController.Login)
 	route.POST("/users", authController.Register)
 }

@@ -31,11 +31,8 @@ func main() {
 		ctx.JSON(http.StatusNotFound, gin.H{})
 	})
 
-	// Create API route group
-	api := router.Group("/api")
-
-	authController.AuthRoutes(api)
-	userController.UserRoutes(api)
+	authController.AuthRoutes(router)
+	userController.UserRoutes(router)
 	//Start listening and serving requests
 	router.Run("localhost:5000")
 }

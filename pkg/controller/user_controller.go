@@ -13,7 +13,7 @@ import (
 )
 
 type UserController interface {
-	UserRoutes(group *gin.RouterGroup)
+	UserRoutes(group *gin.Engine)
 	FetchUser(c *gin.Context)
 }
 
@@ -29,9 +29,9 @@ func NewUserController(userServices services.UserServices, jwtServices services.
 	}
 }
 
-func (userController *UserControllerImpl) UserRoutes(group *gin.RouterGroup) {
-	router := group.Group("/", middleware.AuthorizeJWT(userController.jwtServices))
-	router.GET("/auth", userController.FetchUser)
+func (userController *UserControllerImpl) UserRoutes(router *gin.Engine) {
+	route := router.Group("/api", middleware.AuthorizeJWT(userController.jwtServices))
+	route.GET("/auth", userController.FetchUser)
 }
 
 func (userController *UserControllerImpl) FetchUser(c *gin.Context) {
