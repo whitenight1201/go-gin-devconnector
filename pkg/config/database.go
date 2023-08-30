@@ -32,7 +32,7 @@ func DatabaseConnection() *gorm.DB {
 	db, err := gorm.Open("postgres", dsn)
 	exception.PanicIfNeeded(err)
 
-	db.AutoMigrate(&entity.User{})
+	db.AutoMigrate(&entity.User{}, &entity.Profile{})
 
 	fmt.Println("Database connected successfully!")
 
