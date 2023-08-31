@@ -13,7 +13,7 @@ type CreateProfileRequest struct {
 	Linkedin       string `json:"linkedin"`
 	Youtube        string `json:"youtube"`
 	Instagram      string `json:"instagram"`
-	UserID         int64  `json:"user_id"`
+	UserID         string `json:"user_id"`
 }
 
 type UpdateProfileRequest struct {
@@ -30,5 +30,5 @@ type UpdateProfileRequest struct {
 	Linkedin       string `json:"linkedin"`
 	Youtube        string `json:"youtube"`
 	Instagram      string `json:"instagram"`
-	UserID         int64  `json:"user_id"`
+	UserID         string `json:"user_id"`
 }

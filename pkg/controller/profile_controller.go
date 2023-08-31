@@ -3,7 +3,6 @@ package controller
 import (
 	"fmt"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/whitenight1201/go-devconnector/pkg/dto"
@@ -15,6 +14,7 @@ import (
 type ProfileController interface {
 	ProfileRouters(group *gin.Engine)
 	CreateProfileUser(c *gin.Context)
+	CurrentProfileUser(c *gin.Context)
 }
 
 type ProfielControllerImpl struct {
@@ -30,8 +30,9 @@ func NewProfileController(profileServices services.ProfileServices, jwtServices 
 }
 
 func (profileController *ProfielControllerImpl) ProfileRouters(router *gin.Engine) {
-	route := router.Group("/", middleware.AuthorizeJWT(profileController.jwtServices))
-	route.POST("/", profileController.CreateProfileUser)
+	route := router.Group("/api", middleware.AuthorizeJWT(profileController.jwtServices))
+	route.POST("/profile", profileController.CreateProfileUser)
+	route.GET("/profile/me", profileController.CurrentProfileUser)
 }
 
 func (profileController *ProfielControllerImpl) CreateProfileUser(c *gin.Context) {
@@ -45,9 +46,9 @@ func (profileController *ProfielControllerImpl) CreateProfileUser(c *gin.Context
 
 	claims := profileController.jwtServices.GetClaimsJWT(c)
 	id := fmt.Sprintf("%v", claims["user_id"])
-	_id, _ := strconv.ParseInt(id, 0, 64)
+	//_id, _ := strconv.ParseInt(id, 0, 64)
 
-	profileRequest.UserID = _id
+	profileRequest.UserID = id
 	result, err := profileController.profileServices.CreateProfile(profileRequest)
 	if err != nil {
 		res := response.BuildErrorResponse("Cant create profile", err.Error())
@@ -57,4 +58,19 @@ func (profileController *ProfielControllerImpl) CreateProfileUser(c *gin.Context
 
 	res := response.BuildSuccessResponse("Success", result)
 	c.JSON(http.StatusOK, res)
+}
+
+func (profileController *ProfielControllerImpl) CurrentProfileUser(c *gin.Context) {
+	claims := profileController.jwtServices.GetClaimsJWT(c)
+	id := fmt.Sprintf("%v", claims["user_id"])
+
+	profile, err := profileController.profileServices.FindProfileById(id)
+
+	if err != nil {
+		res := response.BuildErrorResponse("Error", err.Error())
+		c.AbortWithStatusJSON(http.StatusBadRequest, res)
+	}
+
+	res := response.BuildSuccessResponse("Success", profile)
+	c.AbortWithStatusJSON(http.StatusCreated, res)
 }

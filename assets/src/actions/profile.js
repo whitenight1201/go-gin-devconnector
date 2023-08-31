@@ -26,7 +26,7 @@ export const getCurrentProfile = () => async (dispatch) => {
 
     dispatch({
       type: GET_PROFILE,
-      payload: res.data
+      payload: res.data.data
     });
   } catch (err) {
     dispatch({
@@ -97,7 +97,7 @@ export const createProfile =
 
       dispatch({
         type: GET_PROFILE,
-        payload: res.data
+        payload: res.data.data
       });
 
       dispatch(

@@ -12,7 +12,7 @@ import (
 type ProfileServices interface {
 	CreateProfile(profileRequest dto.CreateProfileRequest) (*response.ProfileResponse, error)
 	UpdateProfile(profileRequest dto.UpdateProfileRequest) (*response.ProfileResponse, error)
-	FindProfileById(profileId string, userId string) (*response.ProfileResponse, error)
+	FindProfileById(userId string) (*response.ProfileResponse, error)
 	GetAllProfile(userId string) (*[]response.ProfileResponse, error)
 	DeleteById(profileId string, userId string) (*response.ProfileResponse, error)
 }
@@ -32,6 +32,16 @@ func (profileServices *ProfileServicesImpl) CreateProfile(profileRequest dto.Cre
 	if err := validations.ValidateCreateProfile(profileRequest); err != nil {
 		return nil, err
 	}
+
+	// This part is related when Skills type is []String...
+	//------------------------------------------------------
+	// fmt.Println("~~~~~~~~~~~~~~~~~~~~~~~~~~1")
+	// dpeq := smapping.MapFields(&profileRequest)
+	// delete(dpeq, "Skills")
+	// fmt.Println(dpeq)
+	// skillarray := strings.Split(profileRequest.Skills, ", ")
+	// profile.Skills = skillarray
+	//------------------------------------------------------
 
 	if err := smapping.FillStruct(&profile, smapping.MapFields(&profileRequest)); err != nil {
 		return nil, err
@@ -61,8 +71,8 @@ func (profileServices *ProfileServicesImpl) UpdateProfile(profileRequest dto.Upd
 	return &res, nil
 }
 
-func (profileServices *ProfileServicesImpl) FindProfileById(profileId string, userId string) (*response.ProfileResponse, error) {
-	result, err := profileServices.profileRepo.FindById(profileId, userId)
+func (profileServices *ProfileServicesImpl) FindProfileById(userId string) (*response.ProfileResponse, error) {
+	result, err := profileServices.profileRepo.FindById(userId)
 	if err != nil {
 		return nil, err
 	}

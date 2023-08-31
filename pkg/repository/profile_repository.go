@@ -10,7 +10,7 @@ import (
 type ProfileRepository interface {
 	Create(profile entity.Profile) (entity.Profile, error)
 	Update(profile entity.Profile) (entity.Profile, error)
-	FindById(profileId string, userId string) (entity.Profile, error)
+	FindById(userId string) (entity.Profile, error)
 	GetAll(userId string) ([]entity.Profile, error)
 	Delete(profileId string, userId string) (entity.Profile, error)
 }
@@ -26,11 +26,11 @@ func NewProfileRepository(db *gorm.DB) ProfileRepository {
 }
 
 func (profleRepo *ProfileRepositoryImpl) Create(profile entity.Profile) (entity.Profile, error) {
-	if err := profleRepo.db.Create(&profile).Error; err != nil {
+	//profleRepo.db.LogMode(true)
+	if err := profleRepo.db.Debug().Create(&profile).Error; err != nil {
 		return profile, err
 	}
 
-	profleRepo.db.Preload("User").Find(&profile)
 	return profile, nil
 }
 
@@ -45,15 +45,14 @@ func (profleRepo *ProfileRepositoryImpl) Update(profile entity.Profile) (entity.
 	return profile, nil
 }
 
-func (profleRepo *ProfileRepositoryImpl) FindById(profileId string, userId string) (entity.Profile, error) {
+func (profleRepo *ProfileRepositoryImpl) FindById(userId string) (entity.Profile, error) {
 	var profile entity.Profile
-	result := profleRepo.db.Where("id = ? AND user_id = ?", profileId, userId).First(&profile)
+	result := profleRepo.db.Where("user_id = ?", userId).First(&profile)
 
 	if result.RowsAffected == 0 {
 		return profile, result.Error
 	}
 
-	profleRepo.db.Preload("User").Find(&profile)
 	return profile, nil
 }
 

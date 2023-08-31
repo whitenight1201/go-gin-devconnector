@@ -16,7 +16,7 @@ type ProfileResponse struct {
 	Linkedin       string `json:"linkedin"`
 	Youtube        string `json:"youtube"`
 	Instagram      string `json:"instagram"`
-	UserID         int64  `json:"user_id"`
+	UserID         string `json:"user_id"`
 }
 
 func NewProfileResponse(profile entity.Profile) ProfileResponse {

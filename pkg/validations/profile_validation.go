@@ -7,7 +7,7 @@ import (
 
 func ValidateCreateProfile(profile dto.CreateProfileRequest) error {
 	return validation.ValidateStruct(&profile,
-		validation.Field(&profile.Status, validation.Required, validation.Length(10, 0)),
+		validation.Field(&profile.Status, validation.Required),
 		validation.Field(&profile.Skills, validation.Required),
 		validation.Field(&profile.UserID, validation.Required))
 }
