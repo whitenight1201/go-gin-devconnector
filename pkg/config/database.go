@@ -5,11 +5,11 @@ import (
 	"log"
 	"os"
 
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/joho/godotenv"
 	"github.com/whitenight1201/go-devconnector/pkg/entity"
 	"github.com/whitenight1201/go-devconnector/pkg/exception"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 // creating new connection database
@@ -29,7 +29,9 @@ func DatabaseConnection() *gorm.DB {
 
 	dsn := fmt.Sprintf("host=%s user=%s password=%s port=%s dbname=%s sslmode=disable", dbHost, dbUsername, dbPassword, dbPort, dbName)
 
-	db, err := gorm.Open("postgres", dsn)
+	// db, err := gorm.Open("postgres", dsn)//when using jinzhu/gorom
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+
 	exception.PanicIfNeeded(err)
 
 	db.AutoMigrate(&entity.User{}, &entity.Profile{})
@@ -41,5 +43,7 @@ func DatabaseConnection() *gorm.DB {
 
 // closing database connection
 func CloseDatabaseConnection(db *gorm.DB) {
-	db.Close()
+	dbSQL, err := db.DB()
+	exception.PanicIfNeeded(err)
+	dbSQL.Close()
 }

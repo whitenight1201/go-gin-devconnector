@@ -4,12 +4,12 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/jinzhu/gorm"
 	"github.com/mashingan/smapping"
 	"github.com/whitenight1201/go-devconnector/pkg/dto"
 	"github.com/whitenight1201/go-devconnector/pkg/repository"
 	"github.com/whitenight1201/go-devconnector/pkg/response"
 	"github.com/whitenight1201/go-devconnector/pkg/validations"
+	"gorm.io/gorm"
 
 	"log"
 

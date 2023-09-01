@@ -1,10 +1,10 @@
 package repository
 
 import (
-	"github.com/jinzhu/gorm"
 	"github.com/whitenight1201/go-devconnector/pkg/entity"
 	"github.com/whitenight1201/go-devconnector/pkg/exception"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 type UserRepository interface {

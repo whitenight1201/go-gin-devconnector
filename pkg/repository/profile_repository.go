@@ -3,8 +3,8 @@ package repository
 import (
 	"errors"
 
-	"github.com/jinzhu/gorm"
 	"github.com/whitenight1201/go-devconnector/pkg/entity"
+	"gorm.io/gorm"
 )
 
 type ProfileRepository interface {
