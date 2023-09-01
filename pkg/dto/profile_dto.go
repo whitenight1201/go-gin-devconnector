@@ -6,7 +6,7 @@ type CreateProfileRequest struct {
 	Location       string `json:"location"`
 	Status         string `json:"status"`
 	Skills         string `json:"skills"`
-	GithubUsername string `json:"githutusername"`
+	GithubUsername string `json:"githubusername"`
 	Bio            string `json:"bio"`
 	Twitter        string `json:"twitter"`
 	Facebook       string `json:"facebook"`
@@ -23,7 +23,7 @@ type UpdateProfileRequest struct {
 	Location       string `json:"location"`
 	Status         string `json:"status"`
 	Skills         string `json:"skills"`
-	GithubUsername string `json:"githutusername"`
+	GithubUsername string `json:"githubusername"`
 	Bio            string `json:"bio"`
 	Twitter        string `json:"twitter"`
 	Facebook       string `json:"facebook"`
